@@ -65,6 +65,16 @@ def install_cephfs():
     queue_install(['ceph-mds'])
 
 
+@when_not('ceph-mds.custom.init')
+def block_default_init():
+    set_state('ceph-mds.custom.init')
+
+
+@when('ceph-mds.connected')
+def initialize_mds(ceph_client):
+    ceph_client.initialize_mds(name='custom')
+
+
 @when('cephfs.configured')
 @when('ceph-mds.pools.available')
 @when_not('cephfs.started')
@@ -237,6 +247,7 @@ def log_mds():
         return 'blocked', 'No MDS detected using current configuration'
     else:
         return 'active', 'Unit is ready ({} MDS)'.format(len(running_mds))
+
 
 # Per https://github.com/juju-solutions/charms.reactive/issues/33,
 # this module may be imported multiple times so ensure the
