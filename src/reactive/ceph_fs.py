@@ -67,11 +67,14 @@ def install_cephfs():
 
 @when_not('ceph-mds.custom.init')
 def block_default_init():
+    log('Setting custom init', level=DEBUG)
     set_state('ceph-mds.custom.init')
 
 
 @when('ceph-mds.connected')
+@when_not('ceph-mds.initialized')
 def initialize_mds(ceph_client):
+    log('Calling custom init', level=DEBUG)
     ceph_client.initialize_mds(name='custom')
 
 
