@@ -75,7 +75,17 @@ def block_default_init():
 @when_not('ceph-mds.initialized')
 def initialize_mds(ceph_client):
     log('Calling custom init', level=DEBUG)
-    ceph_client.initialize_mds(name='custom')
+    erasure_config = {'profile': 'default',
+                      # 'erasure-type': None,
+                      # 'failure-domain': 'osd',
+                      # 'k': 2,
+                      # 'm': 1,
+                      # 'l': None,
+                      }
+    ceph_client.initialize_mds(name='custom',
+                               pool_type='erasure',
+                               weight=40,
+                               erasure_config=erasure_config)
 
 
 @when('cephfs.configured')
