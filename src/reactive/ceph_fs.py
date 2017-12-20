@@ -22,12 +22,12 @@ from charmhelpers.core import hookenv
 from charmhelpers.core.hookenv import (
     application_version_set, config, log, ERROR, cached, DEBUG, unit_get,
     network_get_primary_address, relation_ids,
-    status_set)
+    status_set, service_name)
 from charmhelpers.core.host import service_restart
 from charmhelpers.contrib.network.ip import (
     get_address_in_network,
     get_ipv6_addr)
-
+from charmhelpers.contrib.storage.linux.ceph import CephConfContext
 from charmhelpers.fetch import (
     get_upstream_version,
     apt_install, filter_installed_packages)
@@ -75,17 +75,16 @@ def block_default_init():
 @when_not('ceph-mds.initialized')
 def initialize_mds(ceph_client):
     log('Calling custom init', level=DEBUG)
-    erasure_config = {'profile': 'default',
-                      # 'erasure-type': None,
-                      # 'failure-domain': 'osd',
-                      # 'k': 2,
-                      # 'm': 1,
-                      # 'l': None,
-                      }
-    ceph_client.initialize_mds(name='custom',
-                               pool_type='erasure',
-                               weight=40,
-                               erasure_config=erasure_config)
+    CephConfContext
+    sections = ['profile', 'erasure-type', 'failure-domain', 'k', 'm', 'l']
+    config_flags = CephConfContext(permitted_sections=sections)()
+    name = config('fs-name') or service_name()
+    if name is None:
+        name = service_name()
+    ceph_client.initialize_mds(name=name,
+                               pool_type=config('pool-type'),
+                               weight=config('pool-weight'),
+                               config_flags=config_flags)
 
 
 @when('cephfs.configured')
