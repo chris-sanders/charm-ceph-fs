@@ -71,7 +71,7 @@ def block_default_init():
     set_state('ceph-mds.custom.init')
 
 
-@when('ceph-mds.connected')
+@when('ceph-mds.available')
 @when_not('ceph-mds.initialized')
 def initialize_mds(ceph_client):
     log('Calling custom init', level=DEBUG)
