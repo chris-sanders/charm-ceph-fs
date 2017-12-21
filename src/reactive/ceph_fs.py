@@ -91,6 +91,7 @@ def initialize_mds(ceph_client):
 @when('ceph-mds.pools.available')
 @when_not('cephfs.started')
 def setup_mds(relation):
+    log(message='Starting ceph-mds', level=DEBUG)
     try:
         service_restart('ceph-mds')
         set_state('cephfs.started')
@@ -100,6 +101,7 @@ def setup_mds(relation):
 
 
 @when('ceph-mds.available')
+@when_not('cephfs.configured')
 def config_changed(ceph_client):
     charm_ceph_conf = os.path.join(os.sep,
                                    'etc',
