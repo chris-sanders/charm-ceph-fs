@@ -65,7 +65,7 @@ options:
       If two filesystems share a Ceph cluster with equal expected data, set to 50.
   config-flags:
     type: string
-    default:
+    default: '{"profile":"default"}'
     description: |
       A string representation of a python dictionary containing pool configuration keys.
       For an erasure pool the supported keys are:
