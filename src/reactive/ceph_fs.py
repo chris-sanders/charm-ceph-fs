@@ -75,7 +75,6 @@ def block_default_init():
 @when_not('ceph-mds.initialized')
 def initialize_mds(ceph_client):
     log('Calling custom init', level=DEBUG)
-    CephConfContext
     sections = ['profile', 'erasure-type', 'failure-domain', 'k', 'm', 'l']
     config_flags = CephConfContext(permitted_sections=sections)()
     name = config('fs-name') or service_name()
