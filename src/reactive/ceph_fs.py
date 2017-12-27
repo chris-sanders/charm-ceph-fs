@@ -77,6 +77,9 @@ def initialize_mds(ceph_client):
     log('Calling custom init', level=DEBUG)
     sections = ['profile', 'erasure-type', 'failure-domain', 'k', 'm', 'l']
     config_flags = CephConfContext(permitted_sections=sections)()
+    config_flags['compression-mode'] = config('compression-mode')
+    config_flags['compression-algorithm'] = config('compression-algorithm')
+    config_flags['compression-required-ratio'] = config('compression-required-ratio')
     name = config('fs-name') or service_name()
     if name is None:
         name = service_name()
