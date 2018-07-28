@@ -156,6 +156,13 @@ def config_changed(ceph_client):
             ))
     except IOError as err:
         log("IOError writing mds-a.keyring: {}".format(err))
+    set_state('cephfs.configured')
+
+
+@when('ceph-mds.available')
+@when_not('cephfs.configured')
+def write_config(ceph_client):
+    config_changed(ceph_client)
 
 
 def get_networks(config_opt='ceph-public-network'):
