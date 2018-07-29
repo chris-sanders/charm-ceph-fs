@@ -70,18 +70,17 @@ def install_cephfs():
 def initialize_mds(ceph_client):
     log('Initializing mds', level=DEBUG)
     sections = ['profile', 'erasure-type', 'failure-domain', 'k', 'm', 'l']
-    config_flags = CephConfContext(permitted_sections=sections)()
-    config_flags['compression-mode'] = config('compression-mode')
-    config_flags['compression-algorithm'] = config('compression-algorithm')
-    config_flags['compression-required-ratio'] = \
+    kwargs = CephConfContext(permitted_sections=sections)()
+    kwargs['compression-mode'] = config('compression-mode')
+    kwargs['compression-algorithm'] = config('compression-algorithm')
+    kwargs['compression-required-ratio'] = \
         config('compression-required-ratio')
+    kwargs['pool_type'] = config('pool-type')
+    kwargs['weight'] = config('pool-weight')
     name = config('fs-name') or service_name()
     if name is None:
         name = service_name()
-    ceph_client.initialize_mds(name=name,
-                               pool_type=config('pool-type'),
-                               weight=config('pool-weight'),
-                               config_flags=config_flags)
+    ceph_client.initialize_mds(name, **kwargs)
     set_state('ceph-mds.initialized')
 
 
