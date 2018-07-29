@@ -27,7 +27,6 @@ from charmhelpers.core.host import service_restart
 from charmhelpers.contrib.network.ip import (
     get_address_in_network,
     get_ipv6_addr)
-from charmhelpers.contrib.storage.linux.ceph import CephConfContext
 from charmhelpers.fetch import (
     get_upstream_version,
     apt_install, filter_installed_packages)
@@ -69,17 +68,20 @@ def install_cephfs():
 @when_not('ceph-mds.initialized')
 def initialize_mds(ceph_client):
     log('Initializing mds', level=DEBUG)
-    sections = ['profile', 'erasure-type', 'failure-domain', 'k', 'm', 'l']
-    kwargs = CephConfContext(permitted_sections=sections)()
+    kwargs = {}
+    kwargs['profile'] = config('erasure-profile')
+    kwargs['erasure-type'] = config('erasure-plugin')
+    kwargs['failure-domain'] = config('erasure-failure-domain')
+    kwargs['k'] = config('erasure-k')
+    kwargs['m'] = config('erasure-m')
+    kwargs['l'] = config('erasure-l')
     kwargs['compression-mode'] = config('compression-mode')
     kwargs['compression-algorithm'] = config('compression-algorithm')
     kwargs['compression-required-ratio'] = \
         config('compression-required-ratio')
-    kwargs['pool_type'] = config('pool-type')
+    kwargs['pool-type'] = config('pool-type')
     kwargs['weight'] = config('pool-weight')
     name = config('fs-name') or service_name()
-    if name is None:
-        name = service_name()
     ceph_client.initialize_mds(name, **kwargs)
     set_state('ceph-mds.initialized')
 

@@ -63,18 +63,44 @@ options:
       expected to consume. This is used to scale the number of pgs in the pool. 
       For example, a single pool as the only use of a ceph cluster would be set to 100. 
       If two filesystems share a Ceph cluster with equal expected data, set to 50.
-  config-flags:
+  erasure-profile:
     type: string
-    default: '{"profile":"default"}'
+    default: "default"
     description: |
-      A string representation of a python dictionary containing pool configuration keys.
-      For an erasure pool the supported keys are:
-        - profile: name of the erasure profile to use or create
-        - erasure-type: Erasure algorithium
-        - failure-domain: The failure domain to use for this pool
-        - k: k value
-        - m: m value
-        - l: l value if supported by algorithium 
+      The name of the erasure profile to use, this only applies if the pool-type
+      is set to erasure. Settingn this to a custom value enables setting several
+      of the erasure configuration parameters.
+  erasure-plugin:
+    type: string
+    default: "jerasure"
+    description: |
+      The erasure plugin to use. This only applies if the pool-type is set to 
+      erasure and the erasure-profile is not 'default'
+  erasure-failure-domain:
+    type: string
+    default: "osd"
+    description: |
+      The erasure failure domain. This only applies if the pool-type is set to
+      erasure and the erasure-profile is not 'default'
+  erasure-k:
+    type: int
+    default: 3
+    description: |
+      The number of erasure data chunks. This only applies if the pool-type is 
+      set to erasure and the erasure-profile is not 'default'
+  erasure-m:
+    type: int
+    default: 2
+    description: |
+      The number of encoding chunks. This only applies if the pool-type is set 
+      to erasure and the erasure-profile is not 'default'
+  erasure-l:
+    type: int
+    default: 3
+    description: |
+      The locality setting for erasure encoding. This only applies if the pool-type
+      is set to erasure, the erasure-profile is not 'default', and the erasure-plugin
+      supports a locality setting.
   compression-mode:
     type: string
     default:
